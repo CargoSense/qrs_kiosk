@@ -1,0 +1,15 @@
+[Unit]
+Description=QR Sensor terminal daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=kiosk
+Group=kiosk
+ExecStart=/opt/qrs-kiosk/bin/qrs-kiosk-run
+Restart=always
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+[project]
+name = "qrs-kiosk"
+version = "0.1.0"
+description = "The QR Sensor terminal: a Raspberry Pi with a touchscreen and a barcode scanner showing QRS pages."
+requires-python = ">=3.11"
+dependencies = ["aiohttp>=3.11"]
+
+[project.optional-dependencies]
+pi = ["evdev>=1.7"]
+
+[project.scripts]
+qrs-kiosk = "qrs_kiosk.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-asyncio>=0.24"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["qrs_kiosk"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Sensor terminal</title>
+  <link rel="stylesheet" href="/static/kiosk.css">
+</head>
+<body>
+  <aside id="side">
+    <div class="brand">
+      <svg width="28" height="28" viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="6" aria-hidden="true"><path d="M30.5 30.5H19.5V19.5H30.5V30.5Z"/><path d="M52.5 30.5H41.5V19.5H52.5V30.5Z"/><path d="M30.5 52.5H19.5V41.5H30.5V52.5Z"/><path d="M8.5 27.75V8.5H27.75"/><path d="M8.5 44.25V63.5H27.75"/><path d="M44.25 8.5H63.5V27.75"/><path d="M44.25 63.5H63.5V44.25"/><path d="M55.9375 52.5H41.5V38.75"/><path d="M52.5 38.75V44.25"/></svg>
+      <span id="brand-name">QR Sensor</span>
+    </div>
+    <button id="start" class="start" type="button" disabled>Start</button>
+    <p id="hint" class="hint"></p>
+    <div id="context" class="context"></div>
+    <div class="spacer"></div>
+    <div id="toast" class="toast" hidden></div>
+    <dl class="status">
+      <div><dt>Network</dt><dd id="net">…</dd></div>
+      <div><dt>Scanner</dt><dd id="scanner">…</dd></div>
+      <div><dt>Version</dt><dd id="version">…</dd></div>
+    </dl>
+    <div class="foot">
+      <button id="home" class="icon" type="button" aria-label="Home" title="Home">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
+      </button>
+      <button id="gear" class="icon" type="button" aria-label="Settings" title="Settings">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+    </div>
+  </aside>
+  <main>
+    <iframe id="frame" src="/home" title="QR Sensor"></iframe>
+    <div id="offline" class="offline" hidden>Terminal service not reachable. Retrying…</div>
+  </main>
+  <script src="/static/kiosk.js"></script>
+</body>
+</html>

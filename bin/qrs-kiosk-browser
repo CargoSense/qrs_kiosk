@@ -1,0 +1,17 @@
+#!/bin/sh
+# Chromium in kiosk mode, showing the terminal page; started by labwc's
+# autostart and restarted if it ever exits.
+url=http://localhost:4010/
+while true; do
+  chromium \
+    --kiosk "$url" \
+    --ozone-platform=wayland \
+    --enable-wayland-ime \
+    --touch-events=enabled \
+    --noerrdialogs --disable-infobars --no-first-run \
+    --disable-session-crashed-bubble --disable-features=TranslateUI \
+    --autoplay-policy=no-user-gesture-required \
+    --check-for-update-interval=31536000 \
+    --remote-debugging-port=9222
+  sleep 2
+done

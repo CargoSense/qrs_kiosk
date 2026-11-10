@@ -1,0 +1,3 @@
+# ~/.config/labwc/autostart for the kiosk user
+squeekboard &
+/opt/qrs-kiosk/bin/qrs-kiosk-browser &

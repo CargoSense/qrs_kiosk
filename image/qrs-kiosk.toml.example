@@ -1,0 +1,32 @@
+# QR Sensor terminal provisioning. Copy to the boot partition as
+# qrs-kiosk.toml; the daemon reads it at start. Anything changed later from
+# the settings page is kept on the device and wins over this file.
+
+[qrs]
+# The server stickers point at. Scans of stickers for any other server are ignored.
+base = "https://app.qrsensor.com"
+
+[kiosk]
+name = ""          # shown at the top of the sidebar; blank shows "QR Sensor"
+idle_seconds = 300 # with nothing happening for this long, go back to the wall plate (0 never)
+pin = ""           # needed to change settings; blank means no PIN
+port = 4010
+
+[scanner]
+# A regular expression matched against input device names to find the scanner.
+match = "scan|barcode|symbol|honeywell|zebra|datalogic|newland|socket|inateck|tera|netum"
+# The key that ends a read. KEY_ENTER also accepts the keypad's Enter.
+terminator = "KEY_ENTER"
+# A read with no terminator is taken as complete after this pause.
+gap_ms = 150
+
+[wifi]
+# Joined at install time. Later networks come from a WiFi QR code or the settings page.
+ssid = ""
+password = ""
+hidden = false
+
+[update]
+repo = "CargoSense/qrs_kiosk"
+every_minutes = 60
+token = ""         # a GitHub token with read access to the repo's releases, if it is private

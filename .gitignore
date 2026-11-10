@@ -1,0 +1,7 @@
+.venv/
+dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+dev-state/
+dev.toml

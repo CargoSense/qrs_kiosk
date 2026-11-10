@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terminal settings</title>
+  <link rel="stylesheet" href="/static/kiosk.css">
+  <style>
+    body { display: block; overflow: auto; padding: 16px; -webkit-user-select: text; user-select: text; }
+    h1 { font-size: 22px; margin: 0 0 12px; }
+    h2 { font-size: 15px; margin: 0 0 8px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; }
+    section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+    .row { display: flex; align-items: center; gap: 10px; margin: 8px 0; flex-wrap: wrap; }
+    .row label { min-width: 110px; color: var(--ink-2); }
+    input[type=text], input[type=number], input[type=password], select {
+      flex: 1; min-width: 160px; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff;
+    }
+    button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    button.light { background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+    button.danger { background: var(--error); }
+    button:disabled { opacity: .5; cursor: default; }
+    .note { color: var(--ink-2); font-size: 13px; margin: 6px 0 0; }
+    .msg { margin: 8px 0 0; font-size: 14px; min-height: 1.2em; }
+    .msg.ok { color: var(--ok); } .msg.error { color: var(--error); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; word-break: break-all; }
+    #gate { max-width: 300px; margin: 40px auto; text-align: center; }
+    .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+    .pad button { min-height: 56px; font-size: 22px; background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+    .dots { font-size: 28px; letter-spacing: 8px; min-height: 40px; }
+    dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; }
+    dt { color: var(--ink-2); } dd { margin: 0; }
+    .nets button { display: block; width: 100%; text-align: left; margin: 4px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+  </style>
+</head>
+<body>
+  <div id="gate" hidden>
+    <h1>Settings</h1>
+    <p class="note">Enter the terminal PIN.</p>
+    <div class="dots" id="dots"></div>
+    <div class="pad">
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+      <button data-k="clear">⌫</button><button data-k="0">0</button><button data-k="go">OK</button>
+    </div>
+    <p id="gate-msg" class="msg error"></p>
+  </div>
+
+  <div id="main" hidden>
+    <h1>Terminal settings</h1>
+
+    <section>
+      <h2>Status</h2>
+      <dl>
+        <dt>Version</dt><dd id="s-version"></dd>
+        <dt>Network</dt><dd id="s-network"></dd>
+        <dt>Address</dt><dd id="s-ip" class="mono"></dd>
+        <dt>Scanner</dt><dd id="s-scanner"></dd>
+        <dt>Server</dt><dd id="s-base" class="mono"></dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Wall plate</h2>
+      <dl>
+        <dt>Plate</dt><dd id="p-label"></dd>
+        <dt>URL</dt><dd id="p-url" class="mono"></dd>
+      </dl>
+      <div class="row">
+        <button id="p-next">Use the next sticker scanned</button>
+        <button id="p-clear" class="light">Clear</button>
+      </div>
+      <p id="p-msg" class="msg"></p>
+    </section>
+
+    <section>
+      <h2>Terminal</h2>
+      <div class="row"><label for="f-name">Name</label><input id="f-name" type="text" placeholder="Dock 3"></div>
+      <div class="row"><label for="f-base">QRS server</label><input id="f-base" type="text" placeholder="https://app.qrsensor.com"></div>
+      <div class="row"><label for="f-idle">Idle return (s)</label><input id="f-idle" type="number" min="0" step="10"></div>
+      <div class="row"><label for="f-pin">New PIN</label><input id="f-pin" type="password" inputmode="numeric" placeholder="leave blank to keep"></div>
+      <div class="row"><button id="f-save">Save</button></div>
+      <p class="note">Changes here are kept on the device, over the provisioning file on the boot partition.</p>
+      <p id="f-msg" class="msg"></p>
+    </section>
+
+    <section>
+      <h2>WiFi</h2>
+      <div class="row"><button id="w-scan" class="light">List networks</button></div>
+      <div id="w-nets" class="nets"></div>
+      <div class="row"><label for="w-ssid">Network</label><input id="w-ssid" type="text"></div>
+      <div class="row"><label for="w-pass">Password</label><input id="w-pass" type="password"></div>
+      <div class="row"><label><input id="w-hidden" type="checkbox"> hidden network</label></div>
+      <div class="row"><button id="w-join">Join</button></div>
+      <p class="note">Or scan a WiFi QR code (the kind a phone shares) with the terminal's scanner.</p>
+      <p id="w-msg" class="msg"></p>
+    </section>
+
+    <section>
+      <h2>Software update</h2>
+      <dl>
+        <dt>Installed</dt><dd id="u-current"></dd>
+        <dt>Available</dt><dd id="u-available"></dd>
+        <dt>State</dt><dd id="u-state"></dd>
+      </dl>
+      <div class="row">
+        <button id="u-check" class="light">Check now</button>
+        <button id="u-apply" disabled>Install and restart</button>
+      </div>
+      <p id="u-msg" class="msg"></p>
+    </section>
+
+    <section>
+      <h2>Device</h2>
+      <div class="row"><button id="d-reboot" class="danger">Reboot</button></div>
+    </section>
+  </div>
+  <script src="/static/settings.js"></script>
+</body>
+</html>

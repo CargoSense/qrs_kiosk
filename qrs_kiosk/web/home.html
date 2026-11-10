@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Sensor</title>
+  <link rel="stylesheet" href="/static/kiosk.css">
+  <style>
+    body { align-items: center; justify-content: center; text-align: center; padding: 24px; }
+    .home { max-width: 420px; }
+    h1 { font-size: 26px; margin: 0 0 8px; }
+    p { color: var(--ink-2); font-size: 17px; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="home">
+    <h1 id="title">QR Sensor</h1>
+    <p id="line">Scan the wall plate to start.</p>
+  </div>
+  <script>
+    fetch("/api/status").then((r) => r.json()).then((s) => {
+      if (s.plate && !s.want_plate) {
+        document.getElementById("title").textContent = s.plate.label || "Ready";
+        document.getElementById("line").textContent = "Press Start, or scan a sensor.";
+      }
+    }).catch(() => {});
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+#!/bin/sh
+# Starts the current version of the daemon. A version that has not yet
+# marked itself healthy gets three starts; after that `current` goes back
+# to `previous`. The daemon marks itself healthy a minute after starting.
+root=/opt/qrs-kiosk
+state=/var/lib/qrs-kiosk
+config=/boot/firmware/qrs-kiosk.toml
+
+current=$(readlink "$root/current")
+version=$(basename "$current")
+if [ ! -f "$state/healthy-$version" ]; then
+  starts=$(cat "$state/starts" 2>/dev/null || echo 0)
+  starts=$((starts + 1))
+  echo "$starts" > "$state/starts"
+  if [ "$starts" -gt 3 ] && [ -L "$root/previous" ]; then
+    echo "qrs-kiosk: $version failed to come up $((starts - 1)) times; going back to $(basename "$(readlink "$root/previous")")" >&2
+    ln -sfn "$(readlink "$root/previous")" "$root/current.new" && mv -T "$root/current.new" "$root/current"
+    rm -f "$state/starts"
+  fi
+fi
+
+exec "$root/current/bin/qrs-kiosk" --config "$config" --state "$state"
