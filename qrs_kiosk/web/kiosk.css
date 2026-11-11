@@ -62,7 +62,9 @@ iframe { width: 100%; height: 100%; border: 0; background: var(--paper); display
   color: var(--accent);
   font-weight: 600;
 }
-.spacer { flex: 1; }
+.clock { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.time { font-size: 45px; font-weight: 700; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+.date { font-size: 20px; color: var(--ink-2); }
 .toast {
   padding: 8px 10px;
   border-radius: 10px;

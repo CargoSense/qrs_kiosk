@@ -169,6 +169,14 @@ addEventListener("message", (e) => {
   activity();
 });
 
+function tick() {
+  const now = new Date();
+  $("time").textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+  $("date").textContent = now.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" });
+}
+tick();
+setInterval(tick, 1000);
+
 $("start").addEventListener("click", () => send({ type: "start" }));
 $("home").addEventListener("click", () => send({ type: "home" }));
 $("gear").addEventListener("click", () => navigate("/settings"));

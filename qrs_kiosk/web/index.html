@@ -15,7 +15,10 @@
     <button id="start" class="start" type="button" disabled>Start</button>
     <p id="hint" class="hint"></p>
     <div id="context" class="context"></div>
-    <div class="spacer"></div>
+    <div class="clock" aria-live="off">
+      <span id="time" class="time"></span>
+      <span id="date" class="date"></span>
+    </div>
     <div id="toast" class="toast" hidden></div>
     <dl class="status">
       <div><dt>Network</dt><dd id="net">…</dd></div>
