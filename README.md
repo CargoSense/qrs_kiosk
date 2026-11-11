@@ -26,7 +26,7 @@ Two parts:
 | `qrs-kiosk:settings` | | opens settings |
 | `qrs-kiosk:set-plate` | | the next sticker scanned becomes the wall plate |
 | `qrs-kiosk:home` | | back to the wall plate |
-| anything else | | ignored, with a note in the sidebar |
+| anything else | | offered to the shell: a screen with one button that leads to a scan has that button pressed and the code handed to the scan it opens, so the operator scans without tapping first; otherwise a note in the sidebar |
 
 The wall plate is the sticker on the wall that establishes where the
 operator is. Start shows its page, which lists the applets for that place.

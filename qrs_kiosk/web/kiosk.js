@@ -1,8 +1,9 @@
 // The kiosk page: a sidebar that stays, and a frame that shows the QRS
 // shell. The daemon decides what a scan means and tells this page what to
-// do: navigate the frame, or hand the scan to the shell's open overlay. The
-// shell tells this page where it is (the kiosk bridge in qrs), which the
-// sidebar shows and which the daemon needs to route the next scan.
+// do: navigate the frame, or hand the scan to the shell, for its open
+// overlay or for the screen's scan button. The shell tells this page where
+// it is (the kiosk bridge in qrs), which the sidebar shows and which the
+// daemon needs to route the next scan, and which scans it had no use for.
 
 const frame = document.getElementById("frame");
 const $ = (id) => document.getElementById(id);
@@ -58,7 +59,8 @@ function handle(msg) {
       break;
     case "scan":
       activity();
-      frame.contentWindow?.postMessage({ type: "qrs:scan", payload: msg.payload, symbology: msg.symbology ?? null }, shellOrigin() ?? "/");
+      if (shell.url) frame.contentWindow?.postMessage({ type: "qrs:scan", payload: msg.payload, symbology: msg.symbology ?? null }, shellOrigin() ?? "/");
+      else unknownCode();
       break;
     case "toast":
       toast(msg.text, msg.kind);
@@ -70,7 +72,12 @@ function navigate(url) {
   activity();
   shell = {};
   renderContext();
+  send({ type: "state", scanning: false, url: null, applet: null, screen: null });
   frame.src = url;
+}
+
+function unknownCode() {
+  toast("Not a code this terminal knows", "error");
 }
 
 function renderStatus() {
@@ -162,6 +169,7 @@ addEventListener("message", (e) => {
   const origin = shellOrigin();
   if (!origin || e.origin !== origin) return;
   const m = e.data;
+  if (m?.type === "qrs:unhandled") return unknownCode();
   if (m?.type !== "qrs:state") return;
   shell = m;
   renderContext();

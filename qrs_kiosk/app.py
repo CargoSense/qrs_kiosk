@@ -72,7 +72,7 @@ class Kiosk:
             base=self.config.base,
             want_plate=self.want_plate or self.config.plate is None,
         )
-        if r.kind == "overlay":
+        if r.kind in ("overlay", "offer"):
             await self.broadcast({"type": "scan", "payload": scan.payload, "symbology": scan.symbology})
         elif r.kind == "wifi":
             await self.toast(f"Joining {r.wifi.ssid}…")
@@ -86,8 +86,6 @@ class Kiosk:
                 await self.toast(f"{self.config.base} does not know that sticker", "error")
         elif r.kind == "navigate":
             await self.navigate(r.url)
-        else:
-            await self.toast("Not a code this terminal knows", "error")
 
     async def command(self, name):
         if name == "settings":

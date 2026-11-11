@@ -6,6 +6,13 @@ installer would notice.
 
 ## Unreleased
 
+- A code scanned while no scan overlay is open goes to the shell anyway.
+  A screen with one button that leads to a scan has that button pressed
+  and the code handed to the scan it opens, so the operator scans a tag
+  without first tapping "Scan tag". The note "Not a code this terminal
+  knows" now comes from the page, after the shell has had no use for it,
+  and also when the frame shows no shell.
+
 ## 0.1.1 (2026-11-11)
 
 - A PIN is 4 to 8 digits. The settings page accepted any text, and a PIN

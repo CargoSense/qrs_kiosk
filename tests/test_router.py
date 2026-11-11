@@ -39,9 +39,10 @@ def test_wifi_and_commands():
     assert r.wifi.ssid == "Dock"
     assert go("qrs-kiosk:settings").command == "settings"
     assert go("QRS-KIOSK:Set-Plate".lower()).command == "set-plate"
-    assert go("qrs-kiosk:format-disk").kind == "ignore"
+    assert go("qrs-kiosk:format-disk").kind == "offer"
 
 
-def test_other_codes_are_ignored():
-    assert go("12345678901234567").kind == "ignore"
-    assert go("https://example.com/s/0b1c2d3e-4f50-6172-8394-a5b6c7d8e9f0/tok").kind == "ignore"
+def test_other_codes_are_offered_to_the_shell():
+    r = go("12345678901234567")
+    assert r.kind == "offer" and r.scan.payload == "12345678901234567"
+    assert go("https://example.com/s/0b1c2d3e-4f50-6172-8394-a5b6c7d8e9f0/tok").kind == "offer"

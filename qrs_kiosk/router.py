@@ -6,7 +6,8 @@ What a scan means, given where the kiosk is. Pure.
   command   a `qrs-kiosk:` code: settings, set-plate, home
   plate     a sticker while the kiosk wants a plate: it becomes the plate
   navigate  a sticker under the configured base: show it
-  ignore    anything else
+  offer     anything else: the shell may take it as the scan its screen
+            is waiting for; the page says when nothing did
 """
 
 import re
@@ -49,8 +50,8 @@ def route(scan, *, scanning, base, want_plate):
     text = scan.payload.strip()
     if text.startswith(COMMAND_PREFIX):
         name = text[len(COMMAND_PREFIX):].strip().lower()
-        return Route("command", command=name) if name in COMMANDS else Route("ignore", scan=scan)
+        return Route("command", command=name) if name in COMMANDS else Route("offer", scan=scan)
     url = sticker_url(text, base)
     if url:
         return Route("plate" if want_plate else "navigate", url=url)
-    return Route("ignore", scan=scan)
+    return Route("offer", scan=scan)

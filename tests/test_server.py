@@ -131,8 +131,7 @@ async def test_with_a_plate_stickers_navigate_and_overlay_scans_pass_through(kio
     await ws.send_json({"type": "state", "scanning": False})
     await asyncio.sleep(0.05)
     await scan(client, "12345678901234567")
-    toast = await ws.receive_json()
-    assert toast["type"] == "toast" and toast["kind"] == "error"
+    assert await ws.receive_json() == {"type": "scan", "payload": "12345678901234567", "symbology": None}, "offered to the shell's screen"
     await ws.close()
 
 
