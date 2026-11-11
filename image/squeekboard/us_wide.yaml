@@ -1,8 +1,9 @@
 # Language: English (US)
 # The terminal's keyboard: squeekboard's us_wide layout with the layout
 # switcher replaced by an Escape key, so a field can be cancelled. Installed
-# to the kiosk user's ~/.local/share/squeekboard/keyboards/, where it
-# overrides the system file of the same name.
+# to the kiosk user's ~/.local/share/squeekboard/keyboards/, which the
+# session's autostart names in SQUEEKBOARD_KEYBOARDSDIR. Layouts not in
+# there (numbers, pin, email) come from squeekboard's built-in copies.
 ---
 outlines:
     default:       { width: 53.76,  height: 42 }

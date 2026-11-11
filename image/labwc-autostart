@@ -1,5 +1,6 @@
 # ~/.config/labwc/autostart for the kiosk user
 # The 7" Touch Display 2 is portrait; the terminal is landscape.
 wlr-randr --output DSI-1 --transform 90
-squeekboard &
+# Pi OS's squeekboard reads layouts only from the directory this names.
+SQUEEKBOARD_KEYBOARDSDIR=$HOME/.local/share/squeekboard/keyboards squeekboard &
 /opt/qrs-kiosk/bin/qrs-kiosk-browser &
