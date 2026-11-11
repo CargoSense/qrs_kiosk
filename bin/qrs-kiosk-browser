@@ -2,12 +2,16 @@
 # Chromium showing the terminal page; started by labwc's autostart and
 # restarted if it ever exits. An app window maximized by labwc, not --kiosk:
 # kiosk mode is a fullscreen window, which labwc draws above the on-screen
-# keyboard. labwc only speaks text-input v3, so Chromium must too.
+# keyboard. labwc only speaks text-input v3, so Chromium must too. Without
+# --password-store=basic Chromium asks gnome-keyring for its store, and the
+# keyring's password prompt has nowhere to show, so Chromium sits on a white
+# screen for ever.
 url=http://localhost:4010/
 while true; do
   chromium \
     --app="$url" \
     --start-maximized \
+    --password-store=basic \
     --ozone-platform=wayland \
     --enable-wayland-ime \
     --wayland-text-input-version=3 \

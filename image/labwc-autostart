@@ -1,3 +1,5 @@
 # ~/.config/labwc/autostart for the kiosk user
+# The 7" Touch Display 2 is portrait; the terminal is landscape.
+wlr-randr --output DSI-1 --transform 90
 squeekboard &
 /opt/qrs-kiosk/bin/qrs-kiosk-browser &
