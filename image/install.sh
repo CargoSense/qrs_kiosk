@@ -79,6 +79,7 @@ cat > "$home/.config/labwc/rc.xml" <<'RC'
 <labwc_config>
   <core><gap>0</gap></core>
   <theme><cornerRadius>0</cornerRadius></theme>
+  <touch mapToOutput="DSI-1" mouseEmulation="no"/>
   <windowRules>
     <windowRule identifier="*" serverDecoration="no"><action name="Maximize"/></windowRule>
   </windowRules>
