@@ -16,7 +16,7 @@ def parse(argv):
     p.add_argument("--config", default=DEFAULT_CONFIG, help="the provisioning file (TOML)")
     p.add_argument("--state", default=DEFAULT_STATE, help="where runtime state is kept")
     p.add_argument("--port", type=int, help="override the port the page is served on")
-    p.add_argument("--dev", action="store_true", help="no scanner device; scans come from POST /dev/scan")
+    p.add_argument("--dev", action="store_true", help="also take scans from POST /dev/scan")
     p.add_argument("--check", action="store_true", help="load the config and exit: the updater's health check")
     p.add_argument("--version", action="version", version=__version__)
     return p.parse_args(argv)

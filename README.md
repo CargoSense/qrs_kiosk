@@ -40,7 +40,7 @@ cp image/qrs-kiosk.toml.example dev.toml      # set [qrs] base = "http://localho
 uv run qrs-kiosk --dev --config dev.toml --state dev-state
 ```
 
-Open http://localhost:4010/. With no scanner, scans come from an endpoint:
+Open http://localhost:4010/. `--dev` adds an endpoint that fakes a scan (the real scanner is read too, where evdev is installed):
 
 ```sh
 curl -X POST localhost:4010/dev/scan -H 'content-type: application/json' \

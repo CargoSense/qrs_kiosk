@@ -8,13 +8,13 @@
   --line: #dde3e8;
   --ok: #1f8a4c;
   --error: #c0392b;
-  --side: 200px;
+  --side: 240px;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body {
   display: flex;
-  font: 15px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 18px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color: var(--ink);
   background: var(--paper);
   overflow: hidden;
@@ -33,30 +33,30 @@ body {
 }
 main { flex: 1; position: relative; min-width: 0; }
 iframe { width: 100%; height: 100%; border: 0; background: var(--paper); display: block; }
-.brand { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--accent); }
+.brand { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; color: var(--accent); }
 .brand span { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .start {
-  min-height: 64px;
+  min-height: 72px;
   border: 0;
   border-radius: 14px;
   background: var(--accent);
   color: var(--accent-ink);
   font: inherit;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   cursor: pointer;
 }
 .start:disabled { background: var(--line); color: var(--ink-2); cursor: default; }
-.start.scan { font-size: 15px; font-weight: 600; padding: 8px; }
-.hint { margin: 0; font-size: 13px; color: var(--ink-2); }
+.start.scan { font-size: 18px; font-weight: 600; padding: 8px; }
+.hint { margin: 0; font-size: 16px; color: var(--ink-2); }
 .hint:empty { display: none; }
-.context { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.context { display: flex; flex-direction: column; gap: 5px; font-size: 16px; }
 .context .where { font-weight: 700; }
 .context .applet { color: var(--ink); }
 .context .screen { color: var(--ink-2); }
 .context .scanning {
   align-self: flex-start;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
   background: #e3f4f3;
   color: var(--accent);
@@ -67,12 +67,12 @@ iframe { width: 100%; height: 100%; border: 0; background: var(--paper); display
   padding: 8px 10px;
   border-radius: 10px;
   background: #e8eef3;
-  font-size: 13px;
+  font-size: 15px;
   word-break: break-word;
 }
 .toast.ok { background: #e3f4e9; color: var(--ok); }
 .toast.error { background: #fbe6e3; color: var(--error); }
-.status { margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+.status { margin: 0; display: flex; flex-direction: column; gap: 5px; font-size: 14px; }
 .status div { display: flex; justify-content: space-between; gap: 6px; }
 .status dt { color: var(--ink-2); }
 .status dd { margin: 0; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -80,8 +80,8 @@ iframe { width: 100%; height: 100%; border: 0; background: var(--paper); display
 .status dd.update { color: var(--ok); font-weight: 600; }
 .foot { display: flex; justify-content: space-between; }
 .icon {
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--card);
@@ -96,5 +96,5 @@ iframe { width: 100%; height: 100%; border: 0; background: var(--paper); display
   border-radius: 10px;
   background: var(--ink);
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
 }

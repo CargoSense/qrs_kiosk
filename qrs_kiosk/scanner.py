@@ -15,6 +15,14 @@ log = logging.getLogger(__name__)
 RESCAN_SECONDS = 2
 
 
+def available():
+    try:
+        import evdev  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
 def find_device(pattern):
     import evdev
 

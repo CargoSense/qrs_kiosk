@@ -29,7 +29,7 @@ class Kiosk:
         self.dev = dev
         self.clients = set()
         self.shell = {"scanning": False}
-        self.scanner = {"connected": dev, "name": "fake scanner (--dev)" if dev else None}
+        self.scanner = {"connected": False, "name": None}
         self.network = {"connected": None, "ssid": None, "ip": None}
         self.want_plate = False
         self.updater = Updater(config, http, config.state_dir)
@@ -196,8 +196,10 @@ async def run(config, *, dev=False):
         await web.TCPSite(runner, "0.0.0.0", config.port).start()
         log.info("qrs-kiosk %s on http://localhost:%d (base %s)%s", __version__, config.port, config.base, " [dev]" if dev else "")
         tasks = [asyncio.create_task(kiosk.housekeeping())]
-        if not dev:
+        if scanner.available():
             tasks.append(asyncio.create_task(scanner.run(config, kiosk.on_scan, kiosk.on_scanner_status)))
+        else:
+            log.info("no evdev here: scans come only from POST /dev/scan" if dev else "no evdev here: no scanner")
         try:
             await kiosk.stopped.wait()
         finally:
