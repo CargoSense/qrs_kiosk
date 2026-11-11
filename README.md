@@ -103,9 +103,10 @@ The daemon checks GitHub Releases of this repository every hour (and on
 times, `bin/qrs-kiosk-run` points `current` back at `previous`. A version
 marks itself healthy after a minute up.
 
-A release is a tag `v<version>` matching `pyproject.toml`; the workflow
-builds the wheel and attaches it with `SHA256SUMS`. If the repository is
-private, each device needs a token with read access in `[update] token`.
+A release is a tag `v<version>` matching `pyproject.toml`, with its entry
+in `CHANGELOG.md`; the workflow builds the wheel and attaches it with
+`SHA256SUMS`. If the repository is private, each device needs a token with
+read access in `[update] token`.
 
 The operating system and Chromium do not update over the air: they come
 with the image.

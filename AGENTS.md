@@ -19,6 +19,8 @@ and how to run it; this file says how the code is laid out.
 - `config.py` layers defaults, the provisioning TOML, and `state.json`.
 - `updater.py` installs releases; `bin/qrs-kiosk-run` rolls back.
 - `image/` and `systemd/` are the Pi install; nothing there runs on a laptop.
+- `CHANGELOG.md` gets a line under Unreleased for each change an operator
+  or installer would notice; a release moves them under its version.
 
 Messages between page and daemon (JSON over the websocket):
 
