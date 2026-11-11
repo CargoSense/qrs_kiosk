@@ -112,7 +112,5 @@ with the image.
 
 ## Not yet verified on hardware
 
-- The labwc session, Chromium under Wayland, and the on-screen keyboard
-  (`squeekboard`) appearing when a field in the shell gets focus.
 - HaLow: the dongle or HAT needs its vendor's driver, which pins the kernel.
   `install.sh` does not cover it.

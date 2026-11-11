@@ -190,6 +190,8 @@ $("d-reboot").addEventListener("click", async () => {
   }
 });
 
+addEventListener("resize", () => document.activeElement?.scrollIntoView?.({ block: "center" }));
+
 (async () => {
   const s = await (await fetch("/api/status")).json();
   if (s.pin_set && !pin) gate();
