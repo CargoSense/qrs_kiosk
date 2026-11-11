@@ -12,7 +12,7 @@ Two parts:
   so nothing it types reaches the browser), decides what each scan means,
   serves the kiosk page and the settings page, keeps the configuration,
   joins WiFi, and updates itself.
-- Chromium in kiosk mode showing `http://localhost:4010/`: the sidebar and
+- Chromium as a maximized app window showing `http://localhost:4010/`: the sidebar and
   an iframe with the QRS shell. The shell knows it is framed (the kiosk
   bridge in qrs) and takes scans from the page, and tells it where it is.
 
@@ -75,7 +75,9 @@ sudo reboot
 
 The daemon runs as the `kiosk` user under systemd (`qrs-kiosk.service`),
 logging to the journal. The same user logs in on tty1 and starts labwc,
-whose autostart runs Chromium in kiosk mode and the on-screen keyboard.
+whose autostart runs the on-screen keyboard and Chromium. Chromium is a
+maximized window with no decorations rather than kiosk mode: a fullscreen
+window would sit above the keyboard.
 
 Provisioning before first boot: copy `image/qrs-kiosk.toml.example` to the
 SD card's boot partition as `qrs-kiosk.toml` and fill it in. Anything

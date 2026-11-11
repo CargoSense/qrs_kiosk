@@ -1,12 +1,16 @@
 #!/bin/sh
-# Chromium in kiosk mode, showing the terminal page; started by labwc's
-# autostart and restarted if it ever exits.
+# Chromium showing the terminal page; started by labwc's autostart and
+# restarted if it ever exits. An app window maximized by labwc, not --kiosk:
+# kiosk mode is a fullscreen window, which labwc draws above the on-screen
+# keyboard. labwc only speaks text-input v3, so Chromium must too.
 url=http://localhost:4010/
 while true; do
   chromium \
-    --kiosk "$url" \
+    --app="$url" \
+    --start-maximized \
     --ozone-platform=wayland \
     --enable-wayland-ime \
+    --wayland-text-input-version=3 \
     --touch-events=enabled \
     --noerrdialogs --disable-infobars --no-first-run \
     --disable-session-crashed-bubble --disable-features=TranslateUI \

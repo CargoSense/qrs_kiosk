@@ -79,7 +79,9 @@ cat > "$home/.config/labwc/rc.xml" <<'RC'
 <labwc_config>
   <core><gap>0</gap></core>
   <theme><cornerRadius>0</cornerRadius></theme>
-  <windowRules><windowRule identifier="*" serverDecoration="no"/></windowRules>
+  <windowRules>
+    <windowRule identifier="*" serverDecoration="no"><action name="Maximize"/></windowRule>
+  </windowRules>
 </labwc_config>
 RC
 cat > "$home/.config/labwc/environment" <<'ENV'
