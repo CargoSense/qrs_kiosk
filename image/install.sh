@@ -74,6 +74,8 @@ echo "== kiosk session"
 home=$(eval echo "~$user")
 mkdir -p "$home/.config/labwc"
 cp "$here/image/labwc-autostart" "$home/.config/labwc/autostart"
+mkdir -p "$home/.local/share/squeekboard/keyboards"
+cp "$here/image/squeekboard/us_wide.yaml" "$home/.local/share/squeekboard/keyboards/"
 cat > "$home/.config/labwc/rc.xml" <<'RC'
 <?xml version="1.0"?>
 <labwc_config>

@@ -65,11 +65,7 @@ async function refresh() {
   $("p-label").textContent = status.plate ? status.plate.label || "(no label)" : status.want_plate ? "waiting for a scan" : "none";
   $("p-url").textContent = status.plate?.url || "";
 
-  if (document.activeElement?.tagName !== "INPUT") {
-    $("f-name").value = status.name || "";
-    $("f-base").value = status.base;
-    $("f-idle").value = status.idle_seconds;
-  }
+  if (document.activeElement?.tagName !== "INPUT") fill();
 
   const u = status.update;
   $("u-current").textContent = u.current;
@@ -106,6 +102,18 @@ $("p-clear").addEventListener("click", async () => {
   } catch (e) {
     say("p-msg", e.message, "error");
   }
+});
+
+function fill() {
+  $("f-name").value = status.name || "";
+  $("f-base").value = status.base;
+  $("f-idle").value = status.idle_seconds;
+  $("f-pin").value = "";
+}
+
+$("f-cancel").addEventListener("click", () => {
+  fill();
+  say("f-msg", "");
 });
 
 $("f-save").addEventListener("click", async () => {
@@ -192,7 +200,12 @@ $("d-reboot").addEventListener("click", async () => {
 
 addEventListener("resize", () => document.activeElement?.scrollIntoView?.({ block: "center" }));
 addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && e.target.tagName === "INPUT") e.target.blur();
+  if (e.target.tagName !== "INPUT") return;
+  if (e.key === "Enter") e.target.blur();
+  if (e.key === "Escape") {
+    fill();
+    e.target.blur();
+  }
 });
 
 (async () => {
