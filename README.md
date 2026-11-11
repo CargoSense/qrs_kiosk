@@ -1,6 +1,6 @@
 # QR Sensor terminal
 
-A Raspberry Pi with a touchscreen and a USB barcode scanner, showing QR
+A Raspberry Pi with a touchscreen and a barcode scanner, showing QR
 Sensor pages. An operator scans a sensor's sticker and works through the
 applet on the screen, scanning further codes with the same scanner. A
 sidebar stays beside the page: a Start button for the site's wall plate,
@@ -52,9 +52,9 @@ Tests: `uv run pytest`.
 
 ## The scanner
 
-Any USB scanner in keyboard (HID) mode works. The daemon finds it by name
-(`[scanner] match` in the config, a regular expression) and reads it until
-Enter. Two settings on the scanner itself are worth making:
+Any USB or Bluetooth scanner in keyboard (HID) mode works. The daemon finds
+it by name (`[scanner] match` in the config, a regular expression) and reads
+it until Enter. Two settings on the scanner itself are worth making:
 
 - Send AIM symbology identifiers (`]Q3` before a QR code, `]C1` before Code
   128). The shell's `lengths` rule needs the symbology.
