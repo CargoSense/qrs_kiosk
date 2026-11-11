@@ -182,3 +182,16 @@ async def test_the_pages_are_served(kiosk):
     for path in ("/", "/home", "/settings", "/static/kiosk.js", "/static/settings.js", "/static/kiosk.css"):
         res = await client.get(path)
         assert res.status == 200, path
+
+
+async def test_the_pin_is_four_to_eight_digits(kiosk):
+    _, client = kiosk
+    for bad in ["12", "abcd", 'vvvv : : :"/<.', "123456789"]:
+        res = await client.post("/api/settings", json={"pin": bad}, headers={"x-pin": "1234"})
+        assert res.status == 422, bad
+    res = await client.post("/api/settings", json={"pin": "246810"}, headers={"x-pin": "1234"})
+    assert res.status == 200
+    res = await client.post("/api/settings", json={"name": "x"}, headers={"x-pin": "1234"})
+    assert res.status == 403
+    res = await client.post("/api/settings", json={"name": "x"}, headers={"x-pin": "246810"})
+    assert res.status == 200

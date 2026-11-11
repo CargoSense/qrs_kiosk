@@ -168,8 +168,8 @@ class Kiosk:
     async def housekeeping(self):
         started = time.monotonic()
         healthy = False
-        last_network = 0
-        last_update = 0
+        last_network = float("-inf")
+        last_update = float("-inf")
         while True:
             now = time.monotonic()
             if not healthy and now - started >= HEALTHY_AFTER:

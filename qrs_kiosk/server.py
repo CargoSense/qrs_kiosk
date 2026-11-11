@@ -7,6 +7,7 @@ Changes through the API need the PIN from the config, when one is set.
 import asyncio
 import json
 import logging
+import re
 from pathlib import Path
 
 from aiohttp import WSMsgType, web
@@ -116,7 +117,10 @@ async def post_settings(request):
         kiosk.config.set("kiosk", "name", str(data["name"]).strip())
         changed.append("name")
     if "pin" in data:
-        kiosk.config.set("kiosk", "pin", str(data["pin"]).strip())
+        new_pin = str(data["pin"]).strip()
+        if not re.fullmatch(r"[0-9]{4,8}", new_pin):
+            return web.json_response({"error": "the PIN must be 4 to 8 digits"}, status=422)
+        kiosk.config.set("kiosk", "pin", new_pin)
         changed.append("pin")
     await kiosk.broadcast(kiosk.status())
     return web.json_response({"changed": changed, "status": kiosk.status()})

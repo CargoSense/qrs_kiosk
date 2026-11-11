@@ -1,6 +1,6 @@
 [project]
 name = "qrs-kiosk"
-version = "0.1.0"
+version = "0.1.1"
 description = "The QR Sensor terminal: a Raspberry Pi with a touchscreen and a barcode scanner showing QRS pages."
 requires-python = ">=3.11"
 dependencies = ["aiohttp>=3.11"]

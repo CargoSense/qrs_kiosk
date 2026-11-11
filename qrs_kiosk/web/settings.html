@@ -78,7 +78,7 @@
       <div class="row"><label for="f-name">Name</label><input id="f-name" type="text" placeholder="Dock 3"></div>
       <div class="row"><label for="f-base">QRS server</label><input id="f-base" type="text" placeholder="https://app.qrsensor.com"></div>
       <div class="row"><label for="f-idle">Idle return (s)</label><input id="f-idle" type="number" min="0" step="10"></div>
-      <div class="row"><label for="f-pin">New PIN</label><input id="f-pin" type="password" inputmode="numeric" placeholder="leave blank to keep"></div>
+      <div class="row"><label for="f-pin">New PIN</label><input id="f-pin" inputmode="numeric" pattern="[0-9]*" maxlength="8" type="password" inputmode="numeric" placeholder="leave blank to keep"></div>
       <div class="row"><button id="f-save">Save</button><button id="f-cancel" class="light">Cancel</button></div>
       <p class="note">Changes here are kept on the device, over the provisioning file on the boot partition.</p>
       <p id="f-msg" class="msg"></p>
