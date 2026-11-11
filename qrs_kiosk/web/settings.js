@@ -191,6 +191,9 @@ $("d-reboot").addEventListener("click", async () => {
 });
 
 addEventListener("resize", () => document.activeElement?.scrollIntoView?.({ block: "center" }));
+addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.target.tagName === "INPUT") e.target.blur();
+});
 
 (async () => {
   const s = await (await fetch("/api/status")).json();
