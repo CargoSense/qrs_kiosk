@@ -6,6 +6,10 @@ installer would notice.
 
 ## Unreleased
 
+- The settings page pairs a Bluetooth scanner: put the scanner in pairing
+  mode, tap "Find scanners", tap the scanner. A scanner that has lost the
+  terminal is paired again the same way. Paired scanners are listed there
+  with a Forget button.
 - A code scanned while no scan overlay is open goes to the shell anyway.
   A screen with one button that leads to a scan has that button pressed
   and the code handed to the scan it opens, so the operator scans a tag

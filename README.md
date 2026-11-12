@@ -63,6 +63,12 @@ it until Enter. Two settings on the scanner itself are worth making:
   Tab or a function key, then set `[scanner] terminator` to match
   (`KEY_TAB`, `KEY_F12`). Otherwise an embedded newline ends the read early.
 
+A Bluetooth scanner is paired from the settings page: put the scanner in
+pairing mode (its manual has a barcode for that), tap "Find scanners" and
+tap the scanner in the list. The same steps pair it again when it has lost
+the terminal. The daemon drives `bluetoothctl` as the kiosk user; BlueZ's
+D-Bus policy allows that without root.
+
 ## Installing on a Pi
 
 Raspberry Pi OS Lite, 64-bit, Trixie. On the Pi, as root, from a checkout:

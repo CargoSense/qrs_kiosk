@@ -67,6 +67,8 @@ async function refresh() {
 
   if (document.activeElement?.tagName !== "INPUT") fill();
 
+  paired();
+
   const u = status.update;
   $("u-current").textContent = u.current;
   $("u-available").textContent = u.available ? u.available.version : "none";
@@ -161,6 +163,76 @@ $("w-join").addEventListener("click", async () => {
     await refresh();
   } catch (e) {
     say("w-msg", e.message, "error");
+  }
+});
+
+function paired() {
+  const b = status.bluetooth;
+  const box = $("b-paired");
+  box.replaceChildren();
+  $("b-find").disabled = !b.available;
+  if (!b.available) {
+    box.textContent = "Bluetooth is not managed here.";
+    return;
+  }
+  if (!b.paired.length) {
+    box.textContent = "No scanner is paired.";
+    return;
+  }
+  for (const d of b.paired) {
+    const row = document.createElement("div");
+    row.className = "row";
+    const label = document.createElement("span");
+    label.textContent = `${d.name}  ${d.connected ? "connected" : "not connected"}`;
+    label.style.flex = "1";
+    const forget = document.createElement("button");
+    forget.type = "button";
+    forget.className = "light";
+    forget.textContent = "Forget";
+    forget.addEventListener("click", async () => {
+      say("b-msg", "Forgetting…", "");
+      try {
+        const r = await api("POST", "/api/bluetooth/forget", { mac: d.mac });
+        say("b-msg", r.message);
+        await refresh();
+      } catch (e) {
+        say("b-msg", e.message, "error");
+      }
+    });
+    row.append(label, forget);
+    box.append(row);
+  }
+}
+
+$("b-find").addEventListener("click", async () => {
+  $("b-devs").textContent = "Looking… this takes a few seconds.";
+  $("b-find").disabled = true;
+  say("b-msg", "");
+  try {
+    const { devices } = await api("POST", "/api/bluetooth/scan");
+    $("b-devs").replaceChildren();
+    if (!devices.length) $("b-devs").textContent = "Nothing found. Is the scanner in pairing mode?";
+    for (const d of devices) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = `${d.name}${d.scanner ? "  (scanner)" : ""}${d.paired ? "  paired" : ""}`;
+      b.addEventListener("click", async () => {
+        say("b-msg", `Pairing ${d.name}…`, "");
+        try {
+          const r = await api("POST", "/api/bluetooth/pair", { mac: d.mac });
+          say("b-msg", r.message);
+          $("b-devs").replaceChildren();
+          await refresh();
+        } catch (e) {
+          say("b-msg", e.message, "error");
+        }
+      });
+      $("b-devs").append(b);
+    }
+  } catch (e) {
+    $("b-devs").textContent = e.message;
+  } finally {
+    $("b-find").disabled = false;
   }
 });
 
