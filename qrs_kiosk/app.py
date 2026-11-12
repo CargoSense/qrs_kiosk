@@ -12,7 +12,7 @@ import time
 import aiohttp
 from aiohttp import web
 
-from qrs_kiosk import __version__, qrs, scanner, wifi
+from qrs_kiosk import __version__, bluetooth, qrs, scanner, wifi
 from qrs_kiosk.router import route
 from qrs_kiosk.updater import Updater
 
@@ -33,6 +33,7 @@ class Kiosk:
         self.shell = {"scanning": False}
         self.scanner = {"connected": False, "name": None}
         self.network = {"connected": None, "ssid": None, "ip": None}
+        self.bluetooth = {"available": False, "paired": []}
         self.server = {"reachable": None}
         self.want_plate = False
         self.updater = Updater(config, http, config.state_dir)
@@ -50,6 +51,7 @@ class Kiosk:
             "pin_set": bool(self.config.pin),
             "scanner": self.scanner,
             "network": self.network,
+            "bluetooth": self.bluetooth,
             "server": self.server,
             "update": self.updater.status,
             "dev": self.dev,
@@ -155,6 +157,12 @@ class Kiosk:
             self.network = status
             await self.broadcast(self.status())
 
+    async def refresh_bluetooth(self):
+        status = await bluetooth.status()
+        if status != self.bluetooth:
+            self.bluetooth = status
+            await self.broadcast(self.status())
+
     async def refresh_server(self):
         status = {"reachable": await qrs.reachable(self.config.base, self.http)}
         if status != self.server:
@@ -190,6 +198,7 @@ class Kiosk:
             if now - last_network >= NETWORK_EVERY:
                 last_network = now
                 await self.refresh_network()
+                await self.refresh_bluetooth()
             if now - last_server >= (SERVER_EVERY if self.server["reachable"] else SERVER_RETRY):
                 last_server = now
                 await self.refresh_server()
