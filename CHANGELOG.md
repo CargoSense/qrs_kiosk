@@ -12,6 +12,10 @@ installer would notice.
   without first tapping "Scan tag". The note "Not a code this terminal
   knows" now comes from the page, after the shell has had no use for it,
   and also when the frame shows no shell.
+- When the QRS server cannot be reached, the frame says "We're currently
+  offline" instead of showing the browser's error page. The daemon checks
+  the server every 30 seconds, every 5 while it is down, and the page loads
+  the shell again when it is back.
 
 ## 0.1.1 (2026-11-11)
 

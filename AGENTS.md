@@ -26,11 +26,11 @@ Messages between page and daemon (JSON over the websocket):
 
 | from | type | fields |
 |---|---|---|
-| daemon | status | version, name, base, plate, want_plate, idle_seconds, pin_set, scanner, network, update, dev |
+| daemon | status | version, name, base, plate, want_plate, idle_seconds, pin_set, scanner, network, server, update, dev |
 | daemon | navigate | url |
 | daemon | scan | payload, symbology (for the shell: its open overlay, or the screen's scan button; the shell posts `qrs:unhandled` to the page when neither took it) |
 | daemon | toast | text, kind (info, ok, error) |
-| page | hello, start, home, settings | |
+| page | hello, start, home, settings, check | check: the frame loaded a shell URL but no shell reported in |
 | page | state | scanning, url, applet, screen (from the shell) |
 
 The shell's side of this is `assets/js/device/kiosk.js` in qrs.

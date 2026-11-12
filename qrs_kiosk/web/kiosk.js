@@ -10,6 +10,9 @@ const $ = (id) => document.getElementById(id);
 
 let status = null;
 let shell = {};
+let frameUrl = frame.getAttribute("src");
+let serverDown = false;
+let loadTimer = null;
 let ws = null;
 let idleTimer = null;
 let toastTimer = null;
@@ -53,6 +56,7 @@ function handle(msg) {
     case "status":
       status = msg;
       renderStatus();
+      renderServer();
       break;
     case "navigate":
       navigate(msg.url);
@@ -73,8 +77,32 @@ function navigate(url) {
   shell = {};
   renderContext();
   send({ type: "state", scanning: false, url: null, applet: null, screen: null });
+  frameUrl = url;
   frame.src = url;
+  renderServer();
 }
+
+function showingShell() {
+  return Boolean(status?.base) && frameUrl.startsWith(status.base);
+}
+
+// While the server is down the frame holds the browser's own error page,
+// which this page cannot see into or dress up. Cover it, and load the shell
+// again once the daemon reports the server back.
+function renderServer() {
+  const down = status?.server?.reachable === false;
+  const wasDown = serverDown;
+  serverDown = down;
+  if (wasDown && !down && showingShell()) return navigate(frameUrl);
+  $("server-offline").hidden = !(down && showingShell());
+}
+
+// A shell page reports its state as soon as it runs. A load that reports
+// nothing is the browser's error page, so the daemon is asked to look.
+frame.addEventListener("load", () => {
+  clearTimeout(loadTimer);
+  if (showingShell()) loadTimer = setTimeout(() => send({ type: "check" }), 2000);
+});
 
 function unknownCode() {
   toast("Not a code this terminal knows", "error");
@@ -171,6 +199,7 @@ addEventListener("message", (e) => {
   const m = e.data;
   if (m?.type === "qrs:unhandled") return unknownCode();
   if (m?.type !== "qrs:state") return;
+  clearTimeout(loadTimer);
   shell = m;
   renderContext();
   send({ type: "state", scanning: Boolean(m.scanning), url: m.url ?? null, applet: m.applet ?? null, screen: m.screen ?? null });

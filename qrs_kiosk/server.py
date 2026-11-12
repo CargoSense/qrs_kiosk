@@ -122,6 +122,8 @@ async def post_settings(request):
             return web.json_response({"error": "the PIN must be 4 to 8 digits"}, status=422)
         kiosk.config.set("kiosk", "pin", new_pin)
         changed.append("pin")
+    if "base" in changed:
+        await kiosk.refresh_server()
     await kiosk.broadcast(kiosk.status())
     return web.json_response({"changed": changed, "status": kiosk.status()})
 

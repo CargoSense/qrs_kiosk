@@ -1,6 +1,7 @@
 import asyncio
 import json
 
+import aiohttp
 import pytest
 from aiohttp import web
 from aiohttp.test_utils import TestClient, TestServer
@@ -194,3 +195,29 @@ async def test_the_pin_is_four_to_eight_digits(kiosk):
     assert res.status == 403
     res = await client.post("/api/settings", json={"name": "x"}, headers={"x-pin": "246810"})
     assert res.status == 200
+
+
+class Unreachable:
+    def get(self, url, **kw):
+        raise aiohttp.ClientConnectionError("refused")
+
+
+async def test_the_page_hears_when_the_server_comes_and_goes(kiosk):
+    k, client = kiosk
+    ws = await client.ws_connect("/ws")
+    first = await ws.receive_json()
+    assert first["server"] == {"reachable": None}
+
+    await k.refresh_server()
+    (status,) = await messages(ws, 1)
+    assert status["type"] == "status" and status["server"] == {"reachable": True}, "a 404 is still an answer"
+
+    k.http = Unreachable()
+    await k.refresh_server()
+    (status,) = await messages(ws, 1)
+    assert status["server"] == {"reachable": False}
+
+    await k.refresh_server()
+    with pytest.raises(asyncio.TimeoutError):
+        await messages(ws, 1, timeout=0.2)
+    await ws.close()

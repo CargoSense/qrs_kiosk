@@ -20,6 +20,8 @@ log = logging.getLogger(__name__)
 
 HEALTHY_AFTER = 60
 NETWORK_EVERY = 30
+SERVER_EVERY = 30
+SERVER_RETRY = 5
 
 
 class Kiosk:
@@ -31,6 +33,7 @@ class Kiosk:
         self.shell = {"scanning": False}
         self.scanner = {"connected": False, "name": None}
         self.network = {"connected": None, "ssid": None, "ip": None}
+        self.server = {"reachable": None}
         self.want_plate = False
         self.updater = Updater(config, http, config.state_dir)
         self.stopped = asyncio.Event()
@@ -47,6 +50,7 @@ class Kiosk:
             "pin_set": bool(self.config.pin),
             "scanner": self.scanner,
             "network": self.network,
+            "server": self.server,
             "update": self.updater.status,
             "dev": self.dev,
         }
@@ -128,6 +132,8 @@ class Kiosk:
             self.shell = data
         elif kind == "hello":
             await self.broadcast(self.status())
+        elif kind == "check":
+            await self.refresh_server()
         elif kind == "start":
             if self.config.plate:
                 await self.navigate(self.config.plate["url"])
@@ -149,6 +155,13 @@ class Kiosk:
             self.network = status
             await self.broadcast(self.status())
 
+    async def refresh_server(self):
+        status = {"reachable": await qrs.reachable(self.config.base, self.http)}
+        if status != self.server:
+            log.info("%s is %s", self.config.base, "reachable" if status["reachable"] else "not reachable")
+            self.server = status
+            await self.broadcast(self.status())
+
     async def apply_update(self):
         if await self.updater.apply():
             await self.toast(f"Updating to {self.updater.status['available']['version']}…", "ok")
@@ -167,6 +180,7 @@ class Kiosk:
         started = time.monotonic()
         healthy = False
         last_network = float("-inf")
+        last_server = float("-inf")
         last_update = float("-inf")
         while True:
             now = time.monotonic()
@@ -176,6 +190,9 @@ class Kiosk:
             if now - last_network >= NETWORK_EVERY:
                 last_network = now
                 await self.refresh_network()
+            if now - last_server >= (SERVER_EVERY if self.server["reachable"] else SERVER_RETRY):
+                last_server = now
+                await self.refresh_server()
             every = int(self.config.get("update", "every_minutes")) * 60
             if every > 0 and now - last_update >= every and self.network.get("connected") is not False:
                 last_update = now
