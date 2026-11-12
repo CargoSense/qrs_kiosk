@@ -84,8 +84,14 @@ async def test_pair_drops_the_old_bond_first(ctl):
         (("pair",), (0, "Pairing successful")),
     ])
     assert await bluetooth.pair("07:1A:FA:DE:72:75") == (True, "Paired. Scans should arrive now.")
-    verbs = [c[0] for c in fake.calls[1:]]
-    assert verbs == ["remove", "pair", "trust", "connect"]
+    assert fake.calls[1:] == [
+        ("remove", "07:1A:FA:DE:72:75"),
+        ("pairable", "on"),
+        ("pair", "07:1A:FA:DE:72:75"),
+        ("trust", "07:1A:FA:DE:72:75"),
+        ("connect", "07:1A:FA:DE:72:75"),
+        ("pairable", "off"),
+    ]
 
 
 async def test_pair_reports_bluez_failures(ctl):
@@ -93,7 +99,9 @@ async def test_pair_reports_bluez_failures(ctl):
         (("devices", "Paired"), (0, "")),
         (("pair",), (1, "Attempting to pair with 07:1A:FA:DE:72:75\nFailed to pair: org.bluez.Error.AuthenticationCanceled")),
     ])
+    fake = bluetooth.bluetoothctl
     assert await bluetooth.pair("07:1A:FA:DE:72:75") == (False, "Failed to pair: AuthenticationCanceled")
+    assert fake.calls[-1] == ("pairable", "off")
 
 
 async def test_addresses_are_checked():

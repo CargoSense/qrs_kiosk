@@ -85,17 +85,23 @@ async def discover(match):
 
 async def pair(mac):
     """Pairs, trusts and connects the device, dropping any bond the terminal already holds for it. Returns (ok, message)."""
+    # With the adapter not pairable the kernel answers "no bonding" and the
+    # key is never stored; the HID profile then refuses the scanner.
     if not MAC.match(mac):
         return False, "that is not a Bluetooth address"
     if any(d["mac"] == mac for d in await listed("Paired")):
         await bluetoothctl("remove", mac)
-    for verb in ("pair", "trust", "connect"):
-        code, text = await bluetoothctl(verb, mac, timeout=60)
-        if code is None:
-            return False, text
-        if code != 0 or "Failed" in text:
-            log.warning("could not %s %s: %s", verb, mac, text)
-            return False, failure(text) or f"could not {verb}"
+    await bluetoothctl("pairable", "on")
+    try:
+        for verb in ("pair", "trust", "connect"):
+            code, text = await bluetoothctl(verb, mac, timeout=60)
+            if code is None:
+                return False, text
+            if code != 0 or "Failed" in text:
+                log.warning("could not %s %s: %s", verb, mac, text)
+                return False, failure(text) or f"could not {verb}"
+    finally:
+        await bluetoothctl("pairable", "off")
     log.info("paired scanner %s", mac)
     return True, "Paired. Scans should arrive now."
 
