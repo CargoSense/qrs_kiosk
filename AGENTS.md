@@ -11,6 +11,8 @@ and how to run it; this file says how the code is laid out.
   plate?) gives a `Route`. Change behaviour there first and test it there.
 - `scans.py` turns key events into a `Scan` (payload, symbology), pure.
   `scanner.py` is the evdev side, Linux only, imported lazily.
+- `wifi.py` and `bluetooth.py` shell out to `nmcli` and `bluetoothctl`;
+  each says so in its status when the tool is missing.
 - `server.py` is aiohttp: the pages in `web/`, the websocket (`/ws`), the
   settings API (PIN in `x-pin`), and `/dev/scan` in `--dev` mode.
 - `web/kiosk.js` is the page: sidebar plus iframe. It does what the daemon
@@ -26,7 +28,7 @@ Messages between page and daemon (JSON over the websocket):
 
 | from | type | fields |
 |---|---|---|
-| daemon | status | version, name, base, plate, want_plate, idle_seconds, pin_set, scanner, network, server, update, dev |
+| daemon | status | version, name, base, plate, want_plate, idle_seconds, pin_set, scanner, network, bluetooth, server, update, dev |
 | daemon | navigate | url |
 | daemon | scan | payload, symbology (for the shell: its open overlay, or the screen's scan button; the shell posts `qrs:unhandled` to the page when neither took it) |
 | daemon | toast | text, kind (info, ok, error) |

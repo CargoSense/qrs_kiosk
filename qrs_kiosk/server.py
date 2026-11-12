@@ -12,18 +12,17 @@ from pathlib import Path
 
 from aiohttp import WSMsgType, web
 
-from qrs_kiosk import wifi
+from qrs_kiosk import bluetooth, wifi
 from qrs_kiosk.scans import Scan
 
 log = logging.getLogger(__name__)
 
 WEB = Path(__file__).parent / "web"
-NO_CACHE = {"cache-control": "no-store"}
 KIOSK = web.AppKey("kiosk", object)
 
 
 def make_app(kiosk, *, dev=False):
-    app = web.Application()
+    app = web.Application(middlewares=[no_store])
     app[KIOSK] = kiosk
     app.router.add_get("/", page("index.html"))
     app.router.add_get("/home", page("home.html"))
@@ -34,6 +33,9 @@ def make_app(kiosk, *, dev=False):
     app.router.add_post("/api/plate", pinned(post_plate))
     app.router.add_get("/api/wifi", pinned(get_wifi))
     app.router.add_post("/api/wifi", pinned(post_wifi))
+    app.router.add_post("/api/bluetooth/scan", pinned(post_bluetooth_scan))
+    app.router.add_post("/api/bluetooth/pair", pinned(post_bluetooth_pair))
+    app.router.add_post("/api/bluetooth/forget", pinned(post_bluetooth_forget))
     app.router.add_post("/api/update/check", pinned(post_update_check))
     app.router.add_post("/api/update/apply", pinned(post_update_apply))
     app.router.add_post("/api/reboot", pinned(post_reboot))
@@ -43,9 +45,17 @@ def make_app(kiosk, *, dev=False):
     return app
 
 
+@web.middleware
+async def no_store(request, handler):
+    """Chromium on the terminal keeps the pages and scripts of one version past the next."""
+    response = await handler(request)
+    response.headers["cache-control"] = "no-store"
+    return response
+
+
 def page(name):
     async def handler(request):
-        return web.FileResponse(WEB / name, headers=NO_CACHE)
+        return web.FileResponse(WEB / name)
 
     return handler
 
@@ -158,6 +168,34 @@ async def post_wifi(request):
     ok, message = await wifi.join(net)
     await kiosk.refresh_network()
     return web.json_response({"ok": ok, "message": message, "network": kiosk.network}, status=200 if ok else 502)
+
+
+async def post_bluetooth_scan(request):
+    kiosk = request.app[KIOSK]
+    if not kiosk.bluetooth.get("available"):
+        await kiosk.refresh_bluetooth()
+    if not kiosk.bluetooth.get("available"):
+        return web.json_response({"error": kiosk.bluetooth.get("note", "Bluetooth is not managed here")}, status=501)
+    return web.json_response({"devices": await bluetooth.discover(kiosk.config.get("scanner", "match"))})
+
+
+async def post_bluetooth_pair(request):
+    return await bluetooth_change(request, bluetooth.pair)
+
+
+async def post_bluetooth_forget(request):
+    return await bluetooth_change(request, bluetooth.forget)
+
+
+async def bluetooth_change(request, action):
+    kiosk = request.app[KIOSK]
+    data = await body(request)
+    mac = str(data.get("mac", "")).strip().upper()
+    if not mac:
+        return web.json_response({"error": "mac is required"}, status=422)
+    ok, message = await action(mac)
+    await kiosk.refresh_bluetooth()
+    return web.json_response({"ok": ok, "message": message, "bluetooth": kiosk.bluetooth}, status=200 if ok else 502)
 
 
 async def post_update_check(request):

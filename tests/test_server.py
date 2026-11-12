@@ -60,6 +60,7 @@ async def kiosk(tmp_path, monkeypatch):
         f"http://qrs.test/s/{UUID}/plate": {"sensor": {"label": "Monterrey dock"}, "branding": {"name": "Vertiv"}, "applets": []},
     }
     monkeypatch.setattr(app_module.wifi, "status", fake_network_status)
+    monkeypatch.setattr(app_module.bluetooth, "status", fake_bluetooth_status)
     k = Kiosk(config, Describing(known), dev=True)
     client = TestClient(TestServer(make_app(k, dev=True)))
     await client.start_server()
@@ -69,6 +70,10 @@ async def kiosk(tmp_path, monkeypatch):
 
 async def fake_network_status():
     return {"connected": None, "ssid": None, "device": None, "ip": None}
+
+
+async def fake_bluetooth_status():
+    return {"available": False, "paired": []}
 
 
 async def scan(client, payload, symbology=None):
@@ -221,3 +226,41 @@ async def test_the_page_hears_when_the_server_comes_and_goes(kiosk):
     with pytest.raises(asyncio.TimeoutError):
         await messages(ws, 1, timeout=0.2)
     await ws.close()
+
+
+async def test_pairing_a_scanner_needs_the_pin_and_refreshes_status(kiosk, monkeypatch):
+    k, client = kiosk
+    paired = []
+
+    async def fake_pair(mac):
+        paired.append(mac)
+        return True, "Paired. Scans should arrive now."
+
+    async def fake_status():
+        return {"available": True, "paired": [{"mac": m, "name": "BT Scanner", "connected": True} for m in paired]}
+
+    monkeypatch.setattr(app_module.bluetooth, "pair", fake_pair)
+    monkeypatch.setattr(app_module.bluetooth, "status", fake_status)
+
+    res = await client.post("/api/bluetooth/pair", json={"mac": "07:1a:fa:de:72:75"})
+    assert res.status == 403
+
+    res = await client.post("/api/bluetooth/pair", json={"mac": "07:1a:fa:de:72:75"}, headers={"x-pin": "1234"})
+    assert res.status == 200
+    body = await res.json()
+    assert paired == ["07:1A:FA:DE:72:75"]
+    assert body["bluetooth"]["paired"][0]["connected"]
+    assert k.status()["bluetooth"] == body["bluetooth"]
+
+
+async def test_finding_scanners_without_bluetooth_says_so(kiosk):
+    k, client = kiosk
+    res = await client.post("/api/bluetooth/scan", headers={"x-pin": "1234"})
+    assert res.status == 501
+
+
+async def test_nothing_is_cached_by_the_browser(kiosk):
+    k, client = kiosk
+    for path in ("/settings", "/static/settings.js", "/api/status"):
+        res = await client.get(path)
+        assert res.status == 200 and res.headers["cache-control"] == "no-store", path
