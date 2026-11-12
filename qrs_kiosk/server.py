@@ -18,12 +18,11 @@ from qrs_kiosk.scans import Scan
 log = logging.getLogger(__name__)
 
 WEB = Path(__file__).parent / "web"
-NO_CACHE = {"cache-control": "no-store"}
 KIOSK = web.AppKey("kiosk", object)
 
 
 def make_app(kiosk, *, dev=False):
-    app = web.Application()
+    app = web.Application(middlewares=[no_store])
     app[KIOSK] = kiosk
     app.router.add_get("/", page("index.html"))
     app.router.add_get("/home", page("home.html"))
@@ -46,9 +45,17 @@ def make_app(kiosk, *, dev=False):
     return app
 
 
+@web.middleware
+async def no_store(request, handler):
+    """Chromium on the terminal keeps the pages and scripts of one version past the next."""
+    response = await handler(request)
+    response.headers["cache-control"] = "no-store"
+    return response
+
+
 def page(name):
     async def handler(request):
-        return web.FileResponse(WEB / name, headers=NO_CACHE)
+        return web.FileResponse(WEB / name)
 
     return handler
 

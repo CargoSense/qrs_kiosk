@@ -257,3 +257,10 @@ async def test_finding_scanners_without_bluetooth_says_so(kiosk):
     k, client = kiosk
     res = await client.post("/api/bluetooth/scan", headers={"x-pin": "1234"})
     assert res.status == 501
+
+
+async def test_nothing_is_cached_by_the_browser(kiosk):
+    k, client = kiosk
+    for path in ("/settings", "/static/settings.js", "/api/status"):
+        res = await client.get(path)
+        assert res.status == 200 and res.headers["cache-control"] == "no-store", path
