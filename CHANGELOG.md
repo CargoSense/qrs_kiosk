@@ -6,6 +6,8 @@ installer would notice.
 
 ## Unreleased
 
+## 0.1.2 (2026-11-17)
+
 - The settings page pairs a Bluetooth scanner: put the scanner in pairing
   mode, tap "Find scanners", tap the scanner. A scanner that has lost the
   terminal is paired again the same way. Paired scanners are listed there
@@ -20,6 +22,8 @@ installer would notice.
   offline" instead of showing the browser's error page. The daemon checks
   the server every 30 seconds, every 5 while it is down, and the page loads
   the shell again when it is back.
+- The browser caches none of the terminal's pages, scripts or styles, so
+  an update's new settings page is not left running the old script.
 
 ## 0.1.1 (2026-11-11)
 
